@@ -2,41 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Kerala Farming Assistant Design System - All colors, gradients, fonts, etc defined here. 
+All colors MUST be HSL for Kerala agricultural theme.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Kerala Agricultural Color Palette */
+    --background: 120 20% 98%;
+    --foreground: 120 15% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 120 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 120 15% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Kerala Green - Primary (Paddy fields) */
+    --primary: 140 65% 35%;
+    --primary-foreground: 120 20% 98%;
+    --primary-glow: 140 55% 55%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Earth Brown - Secondary (Fertile soil) */
+    --secondary: 25 45% 85%;
+    --secondary-foreground: 25 55% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Coconut Palm - Muted tones */
+    --muted: 120 15% 95%;
+    --muted-foreground: 120 10% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Spice Gold - Accent (Turmeric/Cardamom) */
+    --accent: 45 85% 88%;
+    --accent-foreground: 45 65% 25%;
 
+    /* Monsoon Blue - Info/Weather */
+    --monsoon: 210 85% 65%;
+    --monsoon-foreground: 210 85% 98%;
+
+    /* Alert colors */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
+    --success: 140 65% 45%;
+    --success-foreground: 140 65% 98%;
+    --warning: 45 85% 55%;
+    --warning-foreground: 45 85% 15%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 120 15% 88%;
+    --input: 120 15% 92%;
+    --ring: 140 65% 35%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Kerala Farming Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(140 65% 35%), hsl(210 85% 65%));
+    --gradient-earth: linear-gradient(180deg, hsl(45 65% 85%), hsl(25 45% 75%));
+    --gradient-monsoon: linear-gradient(135deg, hsl(210 85% 65%), hsl(200 75% 55%));
+    --gradient-success: linear-gradient(135deg, hsl(140 65% 45%), hsl(140 55% 55%));
+    
+    /* Elegant shadows with Kerala colors */
+    --shadow-farm: 0 10px 30px -10px hsl(140 65% 35% / 0.3);
+    --shadow-earth: 0 8px 25px -8px hsl(25 45% 35% / 0.25);
+    --shadow-glow: 0 0 40px hsl(140 55% 55% / 0.4);
+    
+    /* Smooth transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
 
@@ -56,33 +86,42 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Kerala Night Mode - Dark earth tones */
+    --background: 120 15% 8%;
+    --foreground: 120 20% 92%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 120 15% 12%;
+    --card-foreground: 120 20% 92%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 120 15% 12%;
+    --popover-foreground: 120 20% 92%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 140 55% 55%;
+    --primary-foreground: 120 15% 8%;
+    --primary-glow: 140 65% 65%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 25 25% 15%;
+    --secondary-foreground: 25 45% 85%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 120 10% 18%;
+    --muted-foreground: 120 15% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 45 65% 25%;
+    --accent-foreground: 45 85% 88%;
 
-    --destructive: 0 62.8% 30.6%;
+    --monsoon: 210 75% 55%;
+    --monsoon-foreground: 210 85% 98%;
+
+    --success: 140 55% 55%;
+    --success-foreground: 140 55% 98%;
+    --warning: 45 75% 45%;
+    --warning-foreground: 45 75% 95%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 120 10% 22%;
+    --input: 120 10% 18%;
+    --ring: 140 55% 55%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
