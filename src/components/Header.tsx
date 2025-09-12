@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/enhanced-button";
-import { Leaf, Menu, Sun, Cloud, TrendingUp } from "lucide-react";
+import { Leaf, Menu, Sun, Cloud, TrendingUp, Languages } from "lucide-react";
 
-const Header = () => {
+interface HeaderProps {
+  language: "en" | "ml";
+  onLanguageToggle: () => void;
+}
+
+const Header = ({ language, onLanguageToggle }: HeaderProps) => {
   return (
     <header className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 transition-smooth">
       <div className="container mx-auto px-4 py-3">
@@ -19,20 +24,32 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Quick Action Buttons */}
-          <div className="hidden md:flex items-center space-x-2">
-            <Button variant="weather" size="sm">
-              <Cloud className="h-4 w-4" />
-              Weather
+          {/* Language Toggle and Quick Actions */}
+          <div className="flex items-center space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={onLanguageToggle}
+              className="flex items-center gap-2"
+            >
+              <Languages className="h-4 w-4" />
+              {language === "en" ? "മലയാളം" : "English"}
             </Button>
-            <Button variant="market" size="sm">
-              <TrendingUp className="h-4 w-4" />
-              Prices
-            </Button>
-            <Button variant="farm" size="sm">
-              <Sun className="h-4 w-4" />
-              Crops
-            </Button>
+            
+            <div className="hidden md:flex items-center space-x-2">
+              <Button variant="weather" size="sm">
+                <Cloud className="h-4 w-4" />
+                {language === "en" ? "Weather" : "കാലാവസ്ഥ"}
+              </Button>
+              <Button variant="market" size="sm">
+                <TrendingUp className="h-4 w-4" />
+                {language === "en" ? "Prices" : "വില"}
+              </Button>
+              <Button variant="farm" size="sm">
+                <Sun className="h-4 w-4" />
+                {language === "en" ? "Crops" : "വിളകൾ"}
+              </Button>
+            </div>
           </div>
 
           {/* Mobile Menu */}

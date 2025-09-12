@@ -1,0 +1,339 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/enhanced-button";
+import { 
+  Cloud, 
+  Sun, 
+  CloudRain, 
+  Thermometer, 
+  Droplets, 
+  Wind,
+  Eye,
+  Gauge,
+  Calendar,
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+
+interface EnhancedWeatherProps {
+  language: "en" | "ml";
+}
+
+const EnhancedWeather = ({ language }: EnhancedWeatherProps) => {
+  const texts = {
+    en: {
+      title: "Weather Forecast",
+      subtitle: "Detailed weather insights for farming decisions",
+      current: "Current Weather",
+      feels: "Feels like",
+      humidity: "Humidity",
+      wind: "Wind",
+      visibility: "Visibility",
+      pressure: "Pressure",
+      uvIndex: "UV Index",
+      forecast7: "7-Day Forecast",
+      farmingAlerts: "Farming Alerts",
+      recommendation: "Today's Recommendation",
+      irrigationTip: "Irrigation Tip",
+      sprayTip: "Spray Schedule",
+      harvestTip: "Harvest Advisory",
+    },
+    ml: {
+      title: "കാലാവസ്ഥ പ്രവചനം",
+      subtitle: "കൃഷി തീരുമാനങ്ങൾക്കായി വിശദമായ കാലാവസ്ഥ വിവരങ്ങൾ",
+      current: "നിലവിലെ കാലാവസ്ഥ",
+      feels: "അനുഭവപ്പെടുന്നത്",
+      humidity: "ആർദ്രത",
+      wind: "കാറ്റ്",
+      visibility: "ദൃശ്യപരത",
+      pressure: "മർദ്ദം",
+      uvIndex: "UV സൂചിക",
+      forecast7: "7 ദിവസത്തെ പ്രവചനം",
+      farmingAlerts: "കൃഷി അലേർട്ടുകൾ",
+      recommendation: "ഇന്നത്തെ ശുപാർശ",
+      irrigationTip: "ജലസേചന നുറുങ്ങ്",
+      sprayTip: "സ്പ്രേ ഷെഡ്യൂൾ",
+      harvestTip: "വിളവെടുപ്പ് ഉപദേശം",
+    }
+  };
+
+  const t = texts[language];
+
+  const currentWeather = {
+    location: language === "en" ? "Kochi, Kerala" : "കൊച്ചി, കേരളം",
+    temperature: 32,
+    feelsLike: 35,
+    condition: language === "en" ? "Partly Cloudy" : "ഭാഗികമായി മേഘാവൃതം",
+    humidity: 85,
+    windSpeed: 12,
+    windDirection: language === "en" ? "SW" : "SW",
+    visibility: 8,
+    pressure: 1012,
+    uvIndex: 8,
+    icon: Cloud
+  };
+
+  const forecast = [
+    {
+      day: language === "en" ? "Today" : "ഇന്ന്",
+      date: "12/09",
+      high: 32,
+      low: 24,
+      condition: language === "en" ? "Cloudy" : "മേഘാവൃതം",
+      rain: 20,
+      icon: Cloud
+    },
+    {
+      day: language === "en" ? "Tomorrow" : "നാളെ",
+      date: "13/09", 
+      high: 29,
+      low: 22,
+      condition: language === "en" ? "Light Rain" : "നേരിയ മഴ",
+      rain: 80,
+      icon: CloudRain
+    },
+    {
+      day: language === "en" ? "Fri" : "വെള്ളി",
+      date: "14/09",
+      high: 31,
+      low: 23,
+      condition: language === "en" ? "Sunny" : "വെയിൽ",
+      rain: 10,
+      icon: Sun
+    },
+    {
+      day: language === "en" ? "Sat" : "ശനി",
+      date: "15/09",
+      high: 33,
+      low: 25,
+      condition: language === "en" ? "Partly Cloudy" : "ഭാഗികമായി മേഘാവൃതം",
+      rain: 30,
+      icon: Cloud
+    },
+    {
+      day: language === "en" ? "Sun" : "ഞായർ",
+      date: "16/09",
+      high: 30,
+      low: 24,
+      condition: language === "en" ? "Rainy" : "മഴയുള്ള",
+      rain: 90,
+      icon: CloudRain
+    },
+    {
+      day: language === "en" ? "Mon" : "തിങ്കൾ",
+      date: "17/09",
+      high: 28,
+      low: 21,
+      condition: language === "en" ? "Heavy Rain" : "കനത്ത മഴ",
+      rain: 95,
+      icon: CloudRain
+    },
+    {
+      day: language === "en" ? "Tue" : "ചൊവ്വ",
+      date: "18/09",
+      high: 31,
+      low: 23,
+      condition: language === "en" ? "Clearing" : "തെളിയുന്നു",
+      rain: 25,
+      icon: Sun
+    }
+  ];
+
+  const alerts = [
+    {
+      type: "warning",
+      title: language === "en" ? "Heavy Rain Alert" : "കനത്ത മഴ അലേർട്ട്",
+      message: language === "en" ? "Heavy rainfall expected Mon-Tue. Avoid pesticide application." : "തിങ്കൾ-ചൊവ്വ കനത്ത മഴ പ്രതീക്ഷിക്കുന്നു. കീടനാശിനി പ്രയോഗം ഒഴിവാക്കുക.",
+      icon: AlertTriangle
+    }
+  ];
+
+  const recommendations = [
+    {
+      category: t.irrigationTip,
+      advice: language === "en" 
+        ? "Reduce irrigation by 50% due to expected rainfall tomorrow"
+        : "നാളത്തെ പ്രതീക്ഷിക്കുന്ന മഴ കാരണം ജലസേചനം 50% കുറയ്ക്കുക",
+      icon: Droplets
+    },
+    {
+      category: t.sprayTip,
+      advice: language === "en" 
+        ? "Good conditions for spraying today. Avoid Friday due to rain"
+        : "ഇന്ന് സ്പ്രേയിംഗിന് നല്ല അവസ്ഥ. മഴ കാരണം വെള്ളിയാഴ്ച ഒഴിവാക്കുക",
+      icon: Wind
+    },
+    {
+      category: t.harvestTip,
+      advice: language === "en" 
+        ? "Perfect conditions for harvesting today. Complete before weekend rain"
+        : "ഇന്ന് വിളവെടുപ്പിന് അനുയോജ്യമായ അവസ്ഥ. വാരാന്ത്യ മഴയ്ക്ക് മുമ്പ് പൂർത്തിയാക്കുക",
+      icon: Calendar
+    }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-3xl font-bold mb-4 bg-gradient-hero bg-clip-text text-transparent">
+          {t.title}
+        </h2>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
+          {t.subtitle}
+        </p>
+      </div>
+
+      {/* Current Weather */}
+      <Card className="shadow-farm border-l-4 border-l-monsoon">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <currentWeather.icon className="h-6 w-6 text-monsoon" />
+            {t.current}
+          </CardTitle>
+          <CardDescription>{currentWeather.location}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="text-center md:text-left">
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-4xl font-bold">{currentWeather.temperature}°C</span>
+                <span className="text-muted-foreground">{t.feels} {currentWeather.feelsLike}°C</span>
+              </div>
+              <p className="text-lg text-muted-foreground">{currentWeather.condition}</p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center gap-2">
+                <Droplets className="h-4 w-4 text-monsoon" />
+                <div>
+                  <p className="text-xs text-muted-foreground">{t.humidity}</p>
+                  <p className="font-medium">{currentWeather.humidity}%</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Wind className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">{t.wind}</p>
+                  <p className="font-medium">{currentWeather.windSpeed} km/h {currentWeather.windDirection}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">{t.visibility}</p>
+                  <p className="font-medium">{currentWeather.visibility} km</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Gauge className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">{t.pressure}</p>
+                  <p className="font-medium">{currentWeather.pressure} hPa</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-4 flex items-center gap-2">
+            <Sun className="h-4 w-4 text-warning" />
+            <span className="text-sm">{t.uvIndex}: </span>
+            <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30">
+              {currentWeather.uvIndex} - {language === "en" ? "Very High" : "വളരെ ഉയർന്നത്"}
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 7-Day Forecast */}
+      <Card className="shadow-farm">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary" />
+            {t.forecast7}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            {forecast.map((day, index) => {
+              const Icon = day.icon;
+              return (
+                <div key={index} className="text-center p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-smooth">
+                  <p className="font-medium text-sm mb-1">{day.day}</p>
+                  <p className="text-xs text-muted-foreground mb-2">{day.date}</p>
+                  <Icon className="h-6 w-6 mx-auto mb-2 text-monsoon" />
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-center gap-1">
+                      <span className="font-bold">{day.high}°</span>
+                      <span className="text-muted-foreground text-sm">{day.low}°</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-1">
+                      <Droplets className="h-3 w-3 text-monsoon" />
+                      <span className="text-xs">{day.rain}%</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Farming Alerts */}
+        <Card className="shadow-farm border-l-4 border-l-warning">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-warning" />
+              {t.farmingAlerts}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {alerts.map((alert, index) => {
+              const Icon = alert.icon;
+              return (
+                <div key={index} className="p-3 bg-warning/10 rounded-lg border border-warning/20">
+                  <div className="flex items-start gap-2">
+                    <Icon className="h-4 w-4 text-warning mt-0.5" />
+                    <div>
+                      <h4 className="font-medium text-warning text-sm">{alert.title}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">{alert.message}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {/* Today's Recommendations */}
+        <Card className="shadow-farm border-l-4 border-l-success">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-success" />
+              {t.recommendation}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {recommendations.map((rec, index) => {
+              const Icon = rec.icon;
+              return (
+                <div key={index} className="p-3 bg-success/10 rounded-lg border border-success/20">
+                  <div className="flex items-start gap-2">
+                    <Icon className="h-4 w-4 text-success mt-0.5" />
+                    <div>
+                      <h4 className="font-medium text-success text-sm">{rec.category}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">{rec.advice}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default EnhancedWeather;
