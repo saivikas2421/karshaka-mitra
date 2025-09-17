@@ -8,6 +8,8 @@ import CropRecommendation from "@/components/CropRecommendation";
 import EnhancedWeather from "@/components/EnhancedWeather";
 import MarketPrices from "@/components/MarketPrices";
 import BilingualChatbot from "@/components/BilingualChatbot";
+import FarmerProfile from "@/components/FarmerProfile";
+import PushNotificationSetup from "@/components/PushNotificationSetup";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -67,6 +69,10 @@ const Index = () => {
         return <EnhancedWeather language={language} />;
       case "market":
         return <MarketPrices language={language} />;
+      case "profile":
+        return <FarmerProfile language={language} />;
+      case "notifications":
+        return <PushNotificationSetup language={language} />;
       default:
         return <Dashboard />;
     }

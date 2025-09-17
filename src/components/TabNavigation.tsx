@@ -5,12 +5,14 @@ import {
   Bug, 
   Cloud, 
   TrendingUp,
-  Stethoscope 
+  Stethoscope,
+  User,
+  Bell
 } from "lucide-react";
 import { Button } from "@/components/ui/enhanced-button";
 import { cn } from "@/lib/utils";
 
-export type TabType = "dashboard" | "crops" | "disease" | "weather" | "market";
+export type TabType = "dashboard" | "crops" | "disease" | "weather" | "market" | "profile" | "notifications";
 
 interface TabNavigationProps {
   activeTab: TabType;
@@ -45,12 +47,22 @@ const TabNavigation = ({ activeTab, onTabChange, language }: TabNavigationProps)
       label: language === "en" ? "Market" : "മാർക്കറ്റ്",
       icon: TrendingUp,
     },
+    {
+      id: "profile" as TabType,
+      label: language === "en" ? "Profile" : "പ്രൊഫൈൽ",
+      icon: User,
+    },
+    {
+      id: "notifications" as TabType,
+      label: language === "en" ? "Alerts" : "അലേർട്ട്",
+      icon: Bell,
+    },
   ];
 
   return (
     <nav className="bg-card border-t border-border sticky bottom-0 z-40 md:relative md:border-t-0 md:border-b md:top-0">
       <div className="container mx-auto px-4">
-        <div className="flex justify-around md:justify-center md:space-x-8 py-2">
+        <div className="flex justify-around md:justify-center md:space-x-2 py-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -60,19 +72,19 @@ const TabNavigation = ({ activeTab, onTabChange, language }: TabNavigationProps)
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
                 className={cn(
-                  "flex flex-col items-center justify-center p-3 rounded-lg transition-smooth min-w-0 flex-1 md:flex-initial md:min-w-[80px]",
+                  "flex flex-col items-center justify-center p-2 rounded-lg transition-smooth min-w-0 flex-1 md:flex-initial md:min-w-[70px]",
                   isActive
                     ? "bg-primary text-primary-foreground shadow-farm"
                     : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                 )}
               >
-                <Icon 
-                  className={cn(
-                    "h-6 w-6 mb-1",
-                    isActive ? "text-primary-foreground" : "text-current"
-                  )} 
-                />
-                <span className="text-xs font-medium truncate">
+                 <Icon 
+                   className={cn(
+                     "h-5 w-5 mb-1",
+                     isActive ? "text-primary-foreground" : "text-current"
+                   )} 
+                 />
+                 <span className="text-[10px] font-medium truncate leading-tight">
                   {tab.label}
                 </span>
               </button>

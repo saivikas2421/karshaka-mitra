@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/enhanced-button";
 import { 
@@ -12,15 +13,22 @@ import {
   Calendar,
   AlertTriangle,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
+  RefreshCw
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import WeatherService, { WeatherData } from "@/services/WeatherService";
+import WeatherAPIKeySetup from "@/components/WeatherAPIKeySetup";
 
 interface EnhancedWeatherProps {
   language: "en" | "ml";
 }
 
 const EnhancedWeather = ({ language }: EnhancedWeatherProps) => {
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasApiKey, setHasApiKey] = useState(false);
+
   const texts = {
     en: {
       title: "Weather Forecast",
@@ -38,6 +46,8 @@ const EnhancedWeather = ({ language }: EnhancedWeatherProps) => {
       irrigationTip: "Irrigation Tip",
       sprayTip: "Spray Schedule",
       harvestTip: "Harvest Advisory",
+      refreshWeather: "Refresh Weather",
+      setupRequired: "Weather API Setup Required",
     },
     ml: {
       title: "കാലാവസ്ഥ പ്രവചനം",
@@ -55,90 +65,107 @@ const EnhancedWeather = ({ language }: EnhancedWeatherProps) => {
       irrigationTip: "ജലസേചന നുറുങ്ങ്",
       sprayTip: "സ്പ്രേ ഷെഡ്യൂൾ",
       harvestTip: "വിളവെടുപ്പ് ഉപദേശം",
+      refreshWeather: "കാലാവസ്ഥ പുതുക്കുക",
+      setupRequired: "കാലാവസ്ഥ API സജ്ജീകരണം ആവശ്യമാണ്",
     }
   };
 
   const t = texts[language];
 
-  const currentWeather = {
-    location: language === "en" ? "Kochi, Kerala" : "കൊച്ചി, കേരളം",
-    temperature: 32,
-    feelsLike: 35,
-    condition: language === "en" ? "Partly Cloudy" : "ഭാഗികമായി മേഘാവൃതം",
-    humidity: 85,
-    windSpeed: 12,
-    windDirection: language === "en" ? "SW" : "SW",
-    visibility: 8,
-    pressure: 1012,
-    uvIndex: 8,
-    icon: Cloud
+  useEffect(() => {
+    const apiKey = WeatherService.getApiKey();
+    setHasApiKey(!!apiKey);
+    if (apiKey) {
+      loadWeatherData();
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const loadWeatherData = async () => {
+    setIsLoading(true);
+    try {
+      const data = await WeatherService.getWeatherData();
+      setWeatherData(data);
+    } catch (error) {
+      console.error('Error loading weather data:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const forecast = [
-    {
-      day: language === "en" ? "Today" : "ഇന്ന്",
-      date: "12/09",
-      high: 32,
-      low: 24,
-      condition: language === "en" ? "Cloudy" : "മേഘാവൃതം",
-      rain: 20,
-      icon: Cloud
-    },
-    {
-      day: language === "en" ? "Tomorrow" : "നാളെ",
-      date: "13/09", 
-      high: 29,
-      low: 22,
-      condition: language === "en" ? "Light Rain" : "നേരിയ മഴ",
-      rain: 80,
-      icon: CloudRain
-    },
-    {
-      day: language === "en" ? "Fri" : "വെള്ളി",
-      date: "14/09",
-      high: 31,
-      low: 23,
-      condition: language === "en" ? "Sunny" : "വെയിൽ",
-      rain: 10,
-      icon: Sun
-    },
-    {
-      day: language === "en" ? "Sat" : "ശനി",
-      date: "15/09",
-      high: 33,
-      low: 25,
-      condition: language === "en" ? "Partly Cloudy" : "ഭാഗികമായി മേഘാവൃതം",
-      rain: 30,
-      icon: Cloud
-    },
-    {
-      day: language === "en" ? "Sun" : "ഞായർ",
-      date: "16/09",
-      high: 30,
-      low: 24,
-      condition: language === "en" ? "Rainy" : "മഴയുള്ള",
-      rain: 90,
-      icon: CloudRain
-    },
-    {
-      day: language === "en" ? "Mon" : "തിങ്കൾ",
-      date: "17/09",
-      high: 28,
-      low: 21,
-      condition: language === "en" ? "Heavy Rain" : "കനത്ത മഴ",
-      rain: 95,
-      icon: CloudRain
-    },
-    {
-      day: language === "en" ? "Tue" : "ചൊവ്വ",
-      date: "18/09",
-      high: 31,
-      low: 23,
-      condition: language === "en" ? "Clearing" : "തെളിയുന്നു",
-      rain: 25,
-      icon: Sun
-    }
-  ];
+  const handleApiKeySet = (apiKey: string) => {
+    setHasApiKey(true);
+    loadWeatherData();
+  };
+
+  const refreshWeather = () => {
+    // Clear cache and reload
+    localStorage.removeItem('weather_cache');
+    loadWeatherData();
+  };
+
+  if (!hasApiKey) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-4 bg-gradient-hero bg-clip-text text-transparent">
+            {t.setupRequired}
+          </h2>
+        </div>
+        <WeatherAPIKeySetup onApiKeySet={handleApiKeySet} language={language} />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-4 bg-gradient-hero bg-clip-text text-transparent">
+            {t.title}
+          </h2>
+          <p className="text-muted-foreground">Loading weather data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!weatherData) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-4 bg-gradient-hero bg-clip-text text-transparent">
+            {t.title}
+          </h2>
+          <p className="text-muted-foreground">Unable to load weather data</p>
+          <Button onClick={refreshWeather} className="mt-4">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const { current, location, forecast: weatherForecast } = weatherData;
+
+  const currentWeather = {
+    location: `${location.name}, ${location.region}`,
+    temperature: Math.round(current.temp_c),
+    feelsLike: Math.round(current.feelslike_c),
+    condition: current.condition.text,
+    humidity: current.humidity,
+    windSpeed: Math.round(current.wind_kph),
+    windDirection: current.wind_dir,
+    visibility: Math.round(current.vis_km),
+    pressure: Math.round(current.pressure_mb),
+    uvIndex: current.uv,
+    icon: current.condition.text.toLowerCase().includes('cloud') ? Cloud : 
+          current.condition.text.toLowerCase().includes('rain') ? CloudRain : Sun
+  };
+
+  const forecastData = weatherForecast?.forecastday?.slice(0, 7) || [];
 
   const alerts = [
     {
@@ -182,6 +209,10 @@ const EnhancedWeather = ({ language }: EnhancedWeatherProps) => {
         <p className="text-muted-foreground max-w-2xl mx-auto">
           {t.subtitle}
         </p>
+        <Button variant="outline" onClick={refreshWeather} className="mt-4">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          {t.refreshWeather}
+        </Button>
       </div>
 
       {/* Current Weather */}
@@ -255,21 +286,27 @@ const EnhancedWeather = ({ language }: EnhancedWeatherProps) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            {forecast.map((day, index) => {
-              const Icon = day.icon;
+            {forecastData.map((day, index) => {
+              const condition = day.day.condition.text.toLowerCase();
+              const Icon = condition.includes('rain') ? CloudRain :
+                          condition.includes('cloud') ? Cloud : Sun;
+              
               return (
                 <div key={index} className="text-center p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-smooth">
-                  <p className="font-medium text-sm mb-1">{day.day}</p>
-                  <p className="text-xs text-muted-foreground mb-2">{day.date}</p>
+                  <p className="font-medium text-sm mb-1">
+                    {index === 0 ? (language === "en" ? "Today" : "ഇന്ന്") : 
+                     new Date(day.date).toLocaleDateString(language === "en" ? "en-US" : "ml-IN", { weekday: 'short' })}
+                  </p>
+                  <p className="text-xs text-muted-foreground mb-2">{day.date.split('-').slice(1).join('/')}</p>
                   <Icon className="h-6 w-6 mx-auto mb-2 text-monsoon" />
                   <div className="space-y-1">
                     <div className="flex items-center justify-center gap-1">
-                      <span className="font-bold">{day.high}°</span>
-                      <span className="text-muted-foreground text-sm">{day.low}°</span>
+                      <span className="font-bold">{Math.round(day.day.maxtemp_c)}°</span>
+                      <span className="text-muted-foreground text-sm">{Math.round(day.day.mintemp_c)}°</span>
                     </div>
                     <div className="flex items-center justify-center gap-1">
                       <Droplets className="h-3 w-3 text-monsoon" />
-                      <span className="text-xs">{day.rain}%</span>
+                      <span className="text-xs">{day.day.daily_chance_of_rain}%</span>
                     </div>
                   </div>
                 </div>
