@@ -118,7 +118,7 @@ const BilingualChatbot = ({ language }: BilingualChatbotProps) => {
 
     try {
       // Use hardcoded API key
-      const apiKey = "sk-proj-your-openai-api-key-here";
+      const apiKey = "sk-proj-1kDU3ZFl7vJ8qV4NxP3T3BlbkFJa5YdHGRpAHQ0xYzE2F9j";
 
       const systemPrompt = language === "en" 
         ? `You are an expert agricultural assistant specializing in Kerala, India farming. Provide practical, accurate advice about crops, diseases, weather, market prices, and farming techniques suitable for Kerala's tropical climate. Keep responses concise but informative. Focus on sustainable and traditional farming practices common in Kerala.`

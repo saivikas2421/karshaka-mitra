@@ -13,12 +13,18 @@ import {
   Target
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import MarketService, { MarketPrice, MarketAlert } from "@/services/MarketService";
 
 interface MarketPricesProps {
   language: "en" | "ml";
 }
 
 const MarketPrices = ({ language }: MarketPricesProps) => {
+  const [marketData, setMarketData] = useState<MarketPrice[]>([]);
+  const [priceAlerts, setPriceAlerts] = useState<MarketAlert[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<string>('');
   const texts = {
     en: {
       title: "Market Prices",
@@ -66,16 +72,45 @@ const MarketPrices = ({ language }: MarketPricesProps) => {
 
   const t = texts[language];
 
-  const marketData = [
+  // Load market data on component mount
+  useEffect(() => {
+    loadMarketData();
+  }, []);
+
+  const loadMarketData = async () => {
+    setIsLoading(true);
+    try {
+      const prices = await MarketService.getMarketPrices('Kerala');
+      const alerts = MarketService.generateMarketAlerts(prices);
+      
+      setMarketData(prices);
+      setPriceAlerts(alerts);
+      setLastUpdated(new Date().toLocaleTimeString());
+    } catch (error) {
+      console.error('Error loading market data:', error);
+      // Fallback to static data if API fails
+      setMarketData(staticMarketData);
+      setPriceAlerts(staticPriceAlerts);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const refreshPrices = () => {
+    loadMarketData();
+  };
+
+  const staticMarketData: MarketPrice[] = [
     {
       commodity: language === "en" ? "Rice (Ponni)" : "അരി (പൊന്നി)",
       todayPrice: 45,
       yesterdayPrice: 43,
       change: 2,
       changePercent: 4.65,
-      trend: "up",
-      demand: "high",
-      quality: "Premium"
+      trend: "up" as const,
+      demand: "high" as const,
+      quality: "Premium",
+      region: "Kerala"
     },
     {
       commodity: language === "en" ? "Coconut" : "തെങ്ങ്",
@@ -83,9 +118,10 @@ const MarketPrices = ({ language }: MarketPricesProps) => {
       yesterdayPrice: 28,
       change: -3,
       changePercent: -10.71,
-      trend: "down",
-      demand: "medium",
-      quality: "Grade A"
+      trend: "down" as const,
+      demand: "medium" as const,
+      quality: "Grade A",
+      region: "Kerala"
     },
     {
       commodity: language === "en" ? "Black Pepper" : "കുരുമുളക്",
@@ -93,9 +129,10 @@ const MarketPrices = ({ language }: MarketPricesProps) => {
       yesterdayPrice: 840,
       change: 10,
       changePercent: 1.19,
-      trend: "up",
-      demand: "high",
-      quality: "Export Quality"
+      trend: "up" as const,
+      demand: "high" as const,
+      quality: "Export Quality",
+      region: "Kerala"
     },
     {
       commodity: language === "en" ? "Cardamom" : "ഏലക്ക",
@@ -103,9 +140,10 @@ const MarketPrices = ({ language }: MarketPricesProps) => {
       yesterdayPrice: 1200,
       change: 0,
       changePercent: 0,
-      trend: "stable",
-      demand: "medium",
-      quality: "Large Bold"
+      trend: "stable" as const,
+      demand: "medium" as const,
+      quality: "Large Bold",
+      region: "Kerala"
     },
     {
       commodity: language === "en" ? "Rubber" : "റബ്ബർ",
@@ -113,9 +151,10 @@ const MarketPrices = ({ language }: MarketPricesProps) => {
       yesterdayPrice: 170,
       change: -5,
       changePercent: -2.94,
-      trend: "down",
-      demand: "low",
-      quality: "RSS-4"
+      trend: "down" as const,
+      demand: "low" as const,
+      quality: "RSS-4",
+      region: "Kerala"
     },
     {
       commodity: language === "en" ? "Ginger" : "ഇഞ്ചി",
@@ -123,9 +162,10 @@ const MarketPrices = ({ language }: MarketPricesProps) => {
       yesterdayPrice: 115,
       change: 5,
       changePercent: 4.35,
-      trend: "up",
-      demand: "high",
-      quality: "Dry"
+      trend: "up" as const,
+      demand: "high" as const,
+      quality: "Dry",
+      region: "Kerala"
     },
     {
       commodity: language === "en" ? "Turmeric" : "മഞ്ഞൾ",
@@ -133,9 +173,10 @@ const MarketPrices = ({ language }: MarketPricesProps) => {
       yesterdayPrice: 92,
       change: 3,
       changePercent: 3.26,
-      trend: "up",
-      demand: "medium",
-      quality: "Finger"
+      trend: "up" as const,
+      demand: "medium" as const,
+      quality: "Finger",
+      region: "Kerala"
     },
     {
       commodity: language === "en" ? "Banana" : "വാഴ",
@@ -143,22 +184,25 @@ const MarketPrices = ({ language }: MarketPricesProps) => {
       yesterdayPrice: 35,
       change: 0,
       changePercent: 0,
-      trend: "stable",
-      demand: "high",
-      quality: "Robusta"
+      trend: "stable" as const,
+      demand: "high" as const,
+      quality: "Robusta",
+      region: "Kerala"
     }
   ];
 
-  const priceAlerts = [
+  const staticPriceAlerts: MarketAlert[] = [
     {
       commodity: language === "en" ? "Black Pepper" : "കുരുമുളക്",
       message: language === "en" ? "Price increased by 15% in last week" : "കഴിഞ്ഞ ആഴ്ചയിൽ വില 15% വർധിച്ചു",
-      type: "positive"
+      type: "positive" as const,
+      timestamp: new Date().toISOString()
     },
     {
       commodity: language === "en" ? "Coconut" : "തെങ്ങ്",
       message: language === "en" ? "Price declining trend - consider holding" : "വിലകുറവ് ട്രെൻഡ് - പിടിച്ചുനിൽക്കുന്നത് പരിഗണിക്കുക",
-      type: "warning"
+      type: "warning" as const,
+      timestamp: new Date().toISOString()
     }
   ];
 
@@ -224,12 +268,14 @@ const MarketPrices = ({ language }: MarketPricesProps) => {
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">{t.lastUpdated}</span>
+            <span className="text-sm text-muted-foreground">
+              {language === "en" ? `Last Updated: ${lastUpdated}` : `അവസാനമായി അപ്ഡേറ്റ് ചെയ്തത്: ${lastUpdated}`}
+            </span>
           </div>
         </div>
-        <Button variant="market" size="sm">
-          <RefreshCw className="h-4 w-4" />
-          {t.refreshPrices}
+        <Button variant="market" size="sm" onClick={refreshPrices} disabled={isLoading}>
+          <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
+          {isLoading ? (language === "en" ? "Loading..." : "ലോഡിംഗ്...") : t.refreshPrices}
         </Button>
       </div>
 

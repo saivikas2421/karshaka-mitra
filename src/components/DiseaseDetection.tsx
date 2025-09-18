@@ -57,7 +57,7 @@ const DiseaseDetection = ({ language }: DiseaseDetectionProps) => {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer sk-proj-your-openai-api-key-here`,
+          'Authorization': `Bearer sk-proj-1kDU3ZFl7vJ8qV4NxP3T3BlbkFJa5YdHGRpAHQ0xYzE2F9j`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

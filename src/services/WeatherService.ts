@@ -44,7 +44,7 @@ class WeatherService {
   }
 
   static getApiKey(): string | null {
-    return "your-weatherapi-key-here"; // Hardcoded API key
+    return "ae6bcb6e9a7e4e759de82301252509"; // Real WeatherAPI.com key
   }
 
   static async getWeatherData(location: string = 'Kochi, Kerala'): Promise<WeatherData | null> {
