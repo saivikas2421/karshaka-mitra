@@ -10,6 +10,7 @@ import MarketPrices from "@/components/MarketPrices";
 import BilingualChatbot from "@/components/BilingualChatbot";
 import FarmerProfile from "@/components/FarmerProfile";
 import PushNotificationSetup from "@/components/PushNotificationSetup";
+import PestAlerts from "@/components/PestAlerts";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -73,6 +74,8 @@ const Index = () => {
         return <FarmerProfile language={language} />;
       case "notifications":
         return <PushNotificationSetup language={language} />;
+      case "alerts":
+        return <PestAlerts language={language} />;
       default:
         return <Dashboard />;
     }

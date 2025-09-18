@@ -1,73 +1,71 @@
-# Welcome to your Lovable project
+# Kerala Farm Assistant - Smart Farming Application
 
-## Project info
+A comprehensive farming assistant app for Kerala farmers with AI-powered features.
 
-**URL**: https://lovable.dev/projects/7fa80b09-4f31-4ff4-8276-312b5fd5a96f
+## 🚀 Quick Setup & Run Commands
 
-## How can I edit this code?
+### Step 1: Install Dependencies
+```bash
+npm install
+```
 
-There are several ways of editing your application.
+### Step 2: Configure API Keys
+Edit these files and replace the placeholder API keys with your real keys:
 
-**Use Lovable**
+1. **src/components/DiseaseDetection.tsx** (line 60)
+2. **src/components/BilingualChatbot.tsx** (line 136) 
+3. **src/services/WeatherService.ts** (line 42)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7fa80b09-4f31-4ff4-8276-312b5fd5a96f) and start prompting.
+Replace `"your-api-key-here"` with your actual OpenAI and WeatherAPI keys.
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### Step 3: Run the Application
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Application will open at: **http://localhost:8080**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📋 Get API Keys
 
-**Use GitHub Codespaces**
+**OpenAI API Key:** https://platform.openai.com/api-keys
+**WeatherAPI Key:** https://www.weatherapi.com/signup.aspx
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🎯 Features
 
-## What technologies are used for this project?
+✅ **AI Crop Disease Detection** - Upload crop photos for instant AI analysis
+✅ **Real-time Weather** - Live weather data with farming alerts
+✅ **Crop Recommendations** - Smart crop suggestions
+✅ **Market Prices** - Kerala crop price updates
+✅ **AI Chatbot** - Bilingual farming assistant (English/Malayalam)
+✅ **Pest Alerts** - Dynamic pest and disease warnings
+✅ **Farmer Profile** - Personal farming data management
+✅ **Offline Support** - Works without internet for cached data
 
-This project is built with:
+## 🔧 Additional Commands
 
+```bash
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# For mobile development
+npx cap add android
+npx cap sync
+npx cap run android
+```
+
+## 📱 Mobile App Support
+The app supports Android deployment via Capacitor for real smartphone usage.
+
+For detailed setup instructions, see `SETUP_INSTRUCTIONS.md`
+
+## Technologies Used
+
+- React + TypeScript
 - Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/7fa80b09-4f31-4ff4-8276-312b5fd5a96f) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Tailwind CSS + shadcn-ui
+- OpenAI API (GPT-4 Vision)
+- WeatherAPI.com
+- Capacitor (Mobile)

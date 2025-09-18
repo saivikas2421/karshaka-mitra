@@ -20,7 +20,6 @@ import {
   Calendar
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import APIKeySetup from "./APIKeySetup";
 
 interface Message {
   id: number;
@@ -40,21 +39,9 @@ const BilingualChatbot = ({ language }: BilingualChatbotProps) => {
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [apiKey, setApiKey] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const savedKey = localStorage.getItem('openai_api_key');
-    if (savedKey) {
-      setApiKey(savedKey);
-    }
-  }, []);
-
-  // Show API key setup if no key is configured
-  if (!apiKey) {
-    return <APIKeySetup onApiKeySet={setApiKey} language={language} />;
-  }
 
   const texts = {
     en: {
@@ -130,27 +117,8 @@ const BilingualChatbot = ({ language }: BilingualChatbotProps) => {
     setIsTyping(true);
 
     try {
-      // Get API key from user input or local storage
-      let apiKey = localStorage.getItem('openai_api_key');
-      
-      if (!apiKey) {
-        // Prompt user for API key
-        apiKey = prompt('Please enter your OpenAI API key to enable AI chat:');
-        if (!apiKey) {
-          setIsTyping(false);
-          const errorMessage: Message = {
-            id: Date.now() + 1,
-            text: language === "en" 
-              ? "OpenAI API key is required for AI responses. Please refresh and enter your API key."
-              : "AI പ്രതികരണങ്ങൾക്ക് OpenAI API കീ ആവശ്യമാണ്. ദയവായി റീഫ്രെഷ് ചെയ്ത് നിങ്ങളുടെ API കീ നൽകുക.",
-            sender: "bot",
-            timestamp: new Date(),
-          };
-          setMessages(prev => [...prev, errorMessage]);
-          return;
-        }
-        localStorage.setItem('openai_api_key', apiKey);
-      }
+      // Use hardcoded API key
+      const apiKey = "sk-proj-your-openai-api-key-here";
 
       const systemPrompt = language === "en" 
         ? `You are an expert agricultural assistant specializing in Kerala, India farming. Provide practical, accurate advice about crops, diseases, weather, market prices, and farming techniques suitable for Kerala's tropical climate. Keep responses concise but informative. Focus on sustainable and traditional farming practices common in Kerala.`

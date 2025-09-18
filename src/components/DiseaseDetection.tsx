@@ -48,21 +48,129 @@ const DiseaseDetection = ({ language }: DiseaseDetectionProps) => {
     if (!selectedImage) return;
     
     setIsAnalyzing(true);
-    // Simulate AI analysis
-    setTimeout(() => {
-      setAnalysisResult({
-        disease: language === "en" ? "Brown Leaf Spot" : "തവിട്ട് ഇല പുള്ളി",
-        confidence: 87,
-        severity: language === "en" ? "Moderate" : "ഇടത്തരം",
-        treatment: language === "en" 
-          ? "Apply fungicide spray (Mancozeb 75% WP) at 2g/liter water. Improve field drainage and avoid overhead irrigation." 
-          : "ഫംഗിസൈഡ് സ്പ്രേ (മാൻകോസെബ് 75% WP) 2g/ലിറ്റർ വെള്ളത്തിൽ കലർത്തി തളിക്കുക. വയൽ ഡ്രെയിനേജ് മെച്ചപ്പെടുത്തുകയും മുകളിൽ നിന്നുള്ള നനവ് ഒഴിവാക്കുകയും ചെയ്യുക.",
-        prevention: language === "en" 
-          ? "Use disease-resistant varieties, maintain proper spacing, and ensure good air circulation."
-          : "രോഗ പ്രതിരോധ ഇനങ്ങൾ ഉപയോഗിക്കുക, ശരിയായ അകലം പാലിക്കുക, നല്ല വായു സഞ്ചാരം ഉറപ്പാക്കുക."
+    
+    try {
+      // Convert image to base64
+      const base64Image = await convertImageToBase64(selectedImage);
+      
+      // Call OpenAI Vision API for real crop disease analysis
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer sk-proj-your-openai-api-key-here`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: language === "en" 
+                    ? `Analyze this crop leaf image for diseases. You are an expert plant pathologist specializing in Kerala, India crops. Provide analysis in this JSON format:
+                    {
+                      "disease": "specific disease name",
+                      "confidence": number (0-100),
+                      "severity": "Mild/Moderate/Severe",
+                      "treatment": "detailed treatment instructions with specific fungicides/chemicals",
+                      "prevention": "prevention measures for future",
+                      "crop_type": "identified crop type if visible"
+                    }
+                    Focus on common Kerala crop diseases like brown leaf spot, blast, blight, etc. Be specific and practical.`
+                    : `ഈ വിള ഇലയുടെ ചിത്രത്തിൽ രോഗങ്ങൾക്കായി വിശകലനം ചെയ്യുക. നിങ്ങൾ കേരളത്തിലെ വിളകളിൽ വിദഗ്ധനായ ഒരു സസ്യ രോഗശാസ്ത്രജ്ഞനാണ്. ഈ JSON ഫോർമാറ്റിൽ വിശകലനം നൽകുക:
+                    {
+                      "disease": "നിർദ്ദിഷ്ട രോഗത്തിന്റെ പേര്",
+                      "confidence": സംഖ്യ (0-100),
+                      "severity": "മന്ദം/ഇടത്തരം/കഠിനം",
+                      "treatment": "നിർദ്ദിഷ്ട ഫംഗിസൈഡുകൾ/രാസവസ്തുക്കളുമായി വിശദമായ ചികിത്സാ നിർദ്ദേശങ്ങൾ",
+                      "prevention": "ഭാവിയിലേക്കുള്ള പ്രതിരോധ നടപടികൾ",
+                      "crop_type": "ദൃശ്യമാകുന്നുണ്ടെങ്കിൽ തിരിച്ചറിഞ്ഞ വിള ഇനം"
+                    }
+                    തവിട്ട് ഇല പുള്ളി, ബ്ലാസ്റ്റ്, ബ്ലൈറ്റ് തുടങ്ങിയ സാധാരണ കേരള വിള രോഗങ്ങളിൽ ശ്രദ്ധ കേന്ദ്രീകരിക്കുക. വ്യക്തവും പ്രായോഗികവുമായിരിക്കുക.`
+                },
+                {
+                  type: 'image_url',
+                  image_url: {
+                    url: base64Image,
+                    detail: 'high'
+                  }
+                }
+              ]
+            }
+          ],
+          max_tokens: 800,
+          temperature: 0.3,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const analysisText = data.choices[0]?.message?.content;
+      
+      if (analysisText) {
+        try {
+          // Try to parse JSON response
+          const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const result = JSON.parse(jsonMatch[0]);
+            setAnalysisResult(result);
+          } else {
+            // Fallback to text parsing
+            setAnalysisResult(parseTextAnalysis(analysisText, language));
+          }
+        } catch (parseError) {
+          // Fallback analysis if JSON parsing fails
+          setAnalysisResult(parseTextAnalysis(analysisText, language));
+        }
+      } else {
+        throw new Error('No analysis received');
+      }
+      
+    } catch (error) {
+      console.error('Error analyzing image:', error);
+      
+      // Fallback to sample analysis if API fails
+      setAnalysisResult({
+        disease: language === "en" ? "Analysis Error - Sample Result" : "വിശകലന പിശക് - സാമ്പിൾ ഫലം",
+        confidence: 0,
+        severity: language === "en" ? "Unknown" : "അജ്ഞാതം",
+        treatment: language === "en" 
+          ? "Unable to analyze image. Please ensure good lighting and clear crop leaf visibility. Try uploading a different image." 
+          : "ചിത്രം വിശകലനം ചെയ്യാൻ കഴിഞ്ഞില്ല. നല്ല പ്രകാശവും വ്യക്തമായ വിള ഇല ദൃശ്യതയും ഉറപ്പാക്കുക. മറ്റൊരു ചിത്രം അപ്ലോഡ് ചെയ്യാൻ ശ്രമിക്കുക.",
+        prevention: language === "en" 
+          ? "Maintain good crop hygiene and regular monitoring for early disease detection."
+          : "നേരത്തെ രോഗം കണ്ടെത്തുന്നതിന് നല്ല വിള ശുചിത്വവും പതിവ് നിരീക്ഷണവും നിലനിർത്തുക."
+      });
+    } finally {
       setIsAnalyzing(false);
-    }, 3000);
+    }
+  };
+
+  const convertImageToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const parseTextAnalysis = (text: string, language: "en" | "ml") => {
+    // Simple text parsing fallback
+    return {
+      disease: language === "en" ? "Disease Detected" : "രോഗം കണ്ടെത്തി",
+      confidence: 75,
+      severity: language === "en" ? "Moderate" : "ഇടത്തരം",
+      treatment: text.substring(0, 200) + "...",
+      prevention: language === "en" 
+        ? "Follow integrated pest management practices and maintain crop hygiene."
+        : "സമഗ്ര കീട നിയന്ത്രണ രീതികൾ പിന്തുടരുകയും വിള ശുചിത്വം നിലനിർത്തുകയും ചെയ്യുക."
+    };
   };
 
   const resetAnalysis = () => {
